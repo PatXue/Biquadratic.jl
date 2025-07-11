@@ -62,25 +62,14 @@ nnna_sum(A::AbstractArray, (x, y)) = A[x+1, y+1] + A[x-1, y-1]
 # Sum spins of (x, y)'s next nearest NW-SE neighbors
 nnnb_sum(A::AbstractArray, (x, y)) = A[x+1, y-1] + A[x-1, y+1]
 
-function Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
-    Lx, Ly = size(mc.spins, 1), size(mc.spins, 2)
+function  Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
+    Lx, Ly = size(mc.spins)
     for _ in 1:length(mc.spins)
         # Select site for spin change
         x = rand(rng, 1:Lx)
         y = rand(rng, 1:Ly)
-
-        # Sum of nearest neighbors' spins
-        H = mc.J * sum_adj(mc.spins, (x, y)) / mc.T
-        unit_H = H / norm(H)
-        H⊥ = nullspace(unit_H')
-
-        # Randomly generate new θ and ϕ according to Boltzmann distribution
-        # (relative to H)
-        cosθ = log1p(rand(rng) * (exp(2norm(H)) - 1)) / norm(H) - 1
-        ϕ = 2π * rand(rng)
-
-        ϕ_comp = sqrt(1 - cosθ^2) * (cos(ϕ)H⊥[:, 1] + sin(ϕ)H⊥[:, 2])
-        mc.spins[x, y, :] .= cosθ * unit_H + ϕ_comp
+        # Propose new spin vector
+        new_v = rand(rng, SVector)
     end
     return nothing
 end
