@@ -13,6 +13,7 @@ using Random
 using StaticArrays
 
 # Note: Using temperature in units of energy (k_B = 1)
+# All energy units are in terms of J2a (best to set J2a = 1)
 struct MC <: AbstractMC
     T::Float64   # Temperature
     J1::Float64  # Nearest neighbor coupling energy
@@ -131,14 +132,13 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     return nothing
 end
 
-function Carlo.register_evaluables(
-    ::Type{MC}, eval::AbstractEvaluator, params::AbstractDict
-)
+function Carlo.register_evaluables(::Type{MC}, eval::AbstractEvaluator,
+                                   params::AbstractDict)
     T = params[:T]
-    J = params[:J]
+    J2a = params[:J2a]
     N = params[:Lx] * params[:Ly]
     evaluate!(eval, :χ, (:Mag, :Mag2)) do mag, mag2
-        return N * J/T * (mag2 - mag^2)
+        return N * J2a/T * (mag2 - mag^2)
     end
 
     evaluate!(eval, :HeatCap, (:Energy2, :Energy)) do E2, E
