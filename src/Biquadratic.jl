@@ -96,21 +96,32 @@ function Carlo.sweep!(mc::MC, ctx::Carlo.MCContext)
     Carlo.sweep!(mc, ctx.rng)
 end
 
+# Calculate the energy contribution of a site (x, y), considering only half of
+# its bonds (avoids double counting when calculating total energy)
+function half_energy(mc::MC, x, y)
+    s = mc.spins[x, y]
+    nn = mc.spins[x+1, y] + mc.spins[x, y+1]
+    nnna = mc.spins[x+1, y+1]
+    nnnb = mc.spins[x+1, y-1]
+    H0 = s ⋅ (mc.J1 * nn + mc.J2a * nnna + mc.J2b * nnnb)
+    biquad = mc.K * (s ⋅ mc.spins[x+1, y])^2
+    return H0 + biquad
+end
+
 function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
-    Lx, Ly = size(mc.spins, 1), size(mc.spins, 2)
+    Lx, Ly = size(mc.spins)
     N = Lx * Ly
     # Magnetization per lattice site
-    mag = norm(sum(mc.spins, dims=(1, 2))) / N
+    mag = norm(sum(mc.spins)) / N
     measure!(ctx, :Mag, mag)
     measure!(ctx, :Mag2, mag^2)
     measure!(ctx, :Mag4, mag^4)
 
     # Energy per lattice site
     energy = 0.0
-    for x in 1:Lx
-        for y in 1:Ly
-            energy += -mc.J * mc.spins[x, y, :] ⋅
-                (mc.spins[mod1(x+1, Lx), y, :] + mc.spins[x, mod1(y+1, Ly), :])
+    for y in 1:Ly
+        for x in 1:Lx
+            energy += half_energy(mc, x, y)
         end
     end
     energy /= N
