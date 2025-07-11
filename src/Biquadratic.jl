@@ -11,6 +11,8 @@ struct MC <: AbstractMC
     J1::Float64  # Nearest neighbor coupling energy
     J2a::Float64 # Next-nearest neighbor coupling energy (NE-SW direction)
     J2b::Float64 # Next-nearest neighbor coupling energy (NW-SE direction)
+    K::Float64   # Biquadratic coupling energy
+
     spins::Array{Float64, 3}
 end
 
@@ -20,7 +22,8 @@ function MC(params::AbstractDict)
     J1 = params[:J1]
     J2a = params[:J2a]
     J2b = params[:J2b]
-    return MC(T, J1, J2a, J2b, fill(0, (Lx, Ly, 3)))
+    K = params[:K]
+    return MC(T, J1, J2a, J2b, K, fill(0, (Lx, Ly, 3)))
 end
 
 """
