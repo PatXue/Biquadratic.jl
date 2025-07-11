@@ -49,19 +49,18 @@ function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
         rand!(ctx.rng, mc.spins)
         return nothing
     end
-
     for I in eachindex(mc.spins)
         mc.spins[I] = SVector(0.0, 0.0, 1.0)
     end
-
     return nothing
 end
 
-function sum_adj(M, (x, y))
-    Lx, Ly = size(M, 1), size(M, 2)
-    return M[mod1(x-1, Lx), y, :] + M[x, mod1(y-1, Ly), :] +
-           M[mod1(x+1, Lx), y, :] + M[x, mod1(y+1, Ly), :]
-end
+# Sum spins of position (x, y)'s nearest neighbors
+nn_sum(A::AbstractArray, (x, y)) = A[x+1, y] + A[x, y+1] + A[x-1, y] + A[x, y-1]
+# Sum spins of (x, y)'s next nearest NE-SW neighbors
+nnna_sum(A::AbstractArray, (x, y)) = A[x+1, y+1] + A[x-1, y-1]
+# Sum spins of (x, y)'s next nearest NW-SE neighbors
+nnnb_sum(A::AbstractArray, (x, y)) = A[x+1, y-1] + A[x-1, y+1]
 
 function Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
     Lx, Ly = size(mc.spins, 1), size(mc.spins, 2)
