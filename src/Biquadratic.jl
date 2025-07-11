@@ -62,6 +62,16 @@ nnna_sum(A::AbstractArray, x, y) = A[x+1, y+1] + A[x-1, y-1]
 # Sum spins of (x, y)'s next nearest NW-SE neighbors
 nnnb_sum(A::AbstractArray, x, y) = A[x+1, y-1] + A[x-1, y+1]
 
+# Calculate the energy at a lattice site (x, y) if it had spin s
+function energy(mc::MC, s::SVector, x, y)
+    nn = nn_sum(mc.spins, x, y)
+    nnna = nnna_sum(mc.spins, x, y)
+    nnnb = nnnb_sum(mc.spins, x, y)
+    H0 = s ⋅ (mc.J1 * nn + mc.J2a * nnna + mc.J2b * nnnb)
+    biquad = mc.K * ((s ⋅ mc.spins[x-1, y])^2 + (s ⋅ mc.spins[x+1, y])^2)
+    return H0 + biquad
+end
+
 function  Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
     Lx, Ly = size(mc.spins)
     for _ in 1:length(mc.spins)
@@ -71,17 +81,7 @@ function  Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
         old_s = mc.spins[x, y]
         # Propose new spin vector
         new_s = rand(rng, SVector)
-
-        nn = nn_sum(mc.spins, x, y)
-        nnna = nnna_sum(mc.spins, x, y)
-        nnnb = nnnb_sum(mc.spins, x, y)
-        H0_ΔE = (new_s - old_s) ⋅ (mc.J1 * nn + mc.J2a * nnna + mc.J2b * nnnb)
-
-        biquad_energy = (s ->
-            mc.K * ((s ⋅ mc.spins[x-1, y])^2 + (s ⋅ mc.spins[x+1, y])^2))
-        biquad_ΔE = biquad_energy(new_s) - biquad_energy(old_s)
-
-        ΔE = H0_ΔE + biquad_ΔE
+        ΔE = energy(mc, new_s, x, y) - energy(mc, old_s, x, y)
 
         # Probability of accepting spin flip (for ΔE ≤ 0 always accept)
         prob = exp(-ΔE / mc.T)
