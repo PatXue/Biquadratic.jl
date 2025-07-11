@@ -22,7 +22,7 @@ struct MC <: AbstractMC
     spins::PeriodicMatrix{SVector{3, Float64}}
 end
 
-MC(T=1.0, J1=0.1, J2a=10, J2b=-10, K=0.5, Lx=20, Ly=20) =
+MC(T, J1, J2a, J2b, K, Lx, Ly) =
     MC(T, J1, J2a, J2b, K, fill(zeros(SVector{3}), (Lx, Ly)))
 
 function MC(params::AbstractDict)
