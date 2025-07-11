@@ -82,6 +82,12 @@ function  Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
         biquad_ΔE = biquad_energy(new_s) - biquad_energy(old_s)
 
         ΔE = H0_ΔE + biquad_ΔE
+
+        # Probability of accepting spin flip (for ΔE ≤ 0 always accept)
+        prob = exp(-ΔE / mc.T)
+        if prob >= 1.0 || rand(ctx.rng) < prob
+            mc.spins[x, y] = new_s
+        end
     end
     return nothing
 end
