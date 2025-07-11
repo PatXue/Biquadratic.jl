@@ -17,9 +17,10 @@ end
 function MC(params::AbstractDict)
     Lx, Ly = params[:Lx], params[:Ly]
     T = params[:T]
-    J = params[:J]
-    H = params[:H]
-    return MC(T, J, H, fill(0, (Lx, Ly, 3)))
+    J1 = params[:J1]
+    J2a = params[:J2a]
+    J2b = params[:J2b]
+    return MC(T, J1, J2a, J2b, fill(0, (Lx, Ly, 3)))
 end
 
 """
