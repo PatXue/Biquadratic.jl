@@ -156,7 +156,5 @@ function Carlo.read_checkpoint!(mc::MC, in::HDF5.Group)
     mc.spins .= read(in, "spins")
     return nothing
 end
-using Carlo
-using HDF5
 
 end
