@@ -1,0 +1,13 @@
+name = "Biquadratic"
+uuid = "6497a0f5-c228-4fc7-a475-e5a776d94169"
+authors = ["PatXue <95881915+PatXue@users.noreply.github.com> and contributors"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.6.7"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
