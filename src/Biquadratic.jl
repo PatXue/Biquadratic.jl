@@ -125,7 +125,6 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
         end
     end
     energy /= N
-    energy += -mc.H * mag
     measure!(ctx, :Energy, energy)
     measure!(ctx, :Energy2, energy^2)
 
