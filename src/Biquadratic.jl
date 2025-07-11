@@ -47,6 +47,7 @@ end
 function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
     if params[:rand_init]
         rand!(ctx.rng, mc.spins)
+        return nothing
     end
 
     for I in eachindex(mc.spins)
