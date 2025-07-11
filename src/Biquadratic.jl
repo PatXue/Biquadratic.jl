@@ -9,6 +9,7 @@ using .PeriodicArrays
 using Carlo
 using HDF5
 using LinearAlgebra
+using Random
 using StaticArrays
 
 # Note: Using temperature in units of energy (k_B = 1)
@@ -37,28 +38,19 @@ function MC(params::AbstractDict)
     return MC(T, J1, J2a, J2b, K, Lx, Ly)
 end
 
-"""
-    rand_vector(vec, [rng = default_rng()])
-
-Fill the first 3 elements of vec with a 3D unit vector, generated uniformly
-"""
-function rand_vector!(vec, rng::AbstractRNG=default_rng())
+function Random.rand(rng::AbstractRNG, ::Type{SVector})
     ϕ = 2π * rand(rng)
     θ = acos(2 * rand(rng) - 1)
-
-    vec[1] = cos(ϕ)sin(θ)
-    vec[2] = sin(ϕ)sin(θ)
-    vec[3] = cos(θ)
-    return nothing
+    return SVector(cos(ϕ)sin(θ), sin(ϕ)sin(θ), cos(θ))
 end
 
 function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
-    vec::Vector{Float64} = [0, 0, 1]
-    for slice in eachslice(mc.spins, dims=(1, 2))
-        if params[:rand_init]
-            rand_vector!(vec, ctx.rng)
-        end
-        slice .= vec
+    if params[:rand_init]
+        rand!(ctx.rng, mc.spins)
+    end
+
+    for I in eachindex(mc.spins)
+        mc.spins[I] = SVector(0.0, 0.0, 1.0)
     end
 
     return nothing
