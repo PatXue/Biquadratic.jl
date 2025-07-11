@@ -12,5 +12,7 @@ function Base.getindex(A::PeriodicArray{T, N}, I::Vararg{Int, N}) where {T, N}
     indices = map(mod1, I, size(A.array))
     return getindex(A.array, indices...)
 end
+Base.convert(::Type{PeriodicArray{T, N}}, A::AbstractArray{T, N}) where {T, N} =
+    PeriodicArray(A)
 
 end
