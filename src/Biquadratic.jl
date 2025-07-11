@@ -9,6 +9,7 @@ using .PeriodicArrays
 using Carlo
 using HDF5
 using LinearAlgebra
+using StaticArrays
 
 # Note: Using temperature in units of energy (k_B = 1)
 struct MC <: AbstractMC
@@ -18,7 +19,7 @@ struct MC <: AbstractMC
     J2b::Float64 # Next-nearest neighbor coupling energy (NW-SE direction)
     K::Float64   # Biquadratic coupling energy
 
-    spins::Array{Float64, 3}
+    spins::PeriodicMatrix{SVector{3, Float64}}
 end
 
 function MC(params::AbstractDict)
@@ -28,7 +29,7 @@ function MC(params::AbstractDict)
     J2a = params[:J2a]
     J2b = params[:J2b]
     K = params[:K]
-    return MC(T, J1, J2a, J2b, K, fill(0, (Lx, Ly, 3)))
+    return MC(T, J1, J2a, J2b, K, fill(SVector(0, 0, 0), (Lx, Ly)))
 end
 
 """
