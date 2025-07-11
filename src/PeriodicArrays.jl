@@ -8,11 +8,16 @@ end
 const PeriodicMatrix{T} = PeriodicArray{T, 2}
 
 Base.size(A::PeriodicArray) = size(A.array)
-function Base.getindex(A::PeriodicArray{T, N}, I::Vararg{Int, N}) where {T, N}
+Base.convert(::Type{PeriodicArray{T, N}}, A::AbstractArray{T, N}) where {T, N} =
+    PeriodicArray(A)
+
+function Base.getindex(A::PeriodicArray, I::Vararg{Int, N}) where {N}
     indices = map(mod1, I, size(A.array))
     return getindex(A.array, indices...)
 end
-Base.convert(::Type{PeriodicArray{T, N}}, A::AbstractArray{T, N}) where {T, N} =
-    PeriodicArray(A)
+function Base.setindex!(A::PeriodicArray, v, I::Vararg{Int, N}) where {N}
+    indices = map(mod1, I, size(A.array))
+    setindex!(A.array, v, indices...)
+end
 
 end
