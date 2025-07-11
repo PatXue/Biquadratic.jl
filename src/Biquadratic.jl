@@ -56,11 +56,11 @@ function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
 end
 
 # Sum spins of position (x, y)'s nearest neighbors
-nn_sum(A::AbstractArray, (x, y)) = A[x+1, y] + A[x, y+1] + A[x-1, y] + A[x, y-1]
+nn_sum(A::AbstractArray, x, y) = A[x+1, y] + A[x, y+1] + A[x-1, y] + A[x, y-1]
 # Sum spins of (x, y)'s next nearest NE-SW neighbors
-nnna_sum(A::AbstractArray, (x, y)) = A[x+1, y+1] + A[x-1, y-1]
+nnna_sum(A::AbstractArray, x, y) = A[x+1, y+1] + A[x-1, y-1]
 # Sum spins of (x, y)'s next nearest NW-SE neighbors
-nnnb_sum(A::AbstractArray, (x, y)) = A[x+1, y-1] + A[x-1, y+1]
+nnnb_sum(A::AbstractArray, x, y) = A[x+1, y-1] + A[x-1, y+1]
 
 function  Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
     Lx, Ly = size(mc.spins)
@@ -68,8 +68,20 @@ function  Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
         # Select site for spin change
         x = rand(rng, 1:Lx)
         y = rand(rng, 1:Ly)
+        old_s = mc.spins[x, y]
         # Propose new spin vector
-        new_v = rand(rng, SVector)
+        new_s = rand(rng, SVector)
+
+        nn = nn_sum(mc.spins, x, y)
+        nnna = nnna_sum(mc.spins, x, y)
+        nnnb = nnnb_sum(mc.spins, x, y)
+        H0_ΔE = (new_s - old_s) ⋅ (mc.J1 * nn + mc.J2a * nnna + mc.J2b * nnnb)
+
+        biquad_energy = (s ->
+            mc.K * ((s ⋅ mc.spins[x-1, y])^2 + (s ⋅ mc.spins[x+1, y])^2))
+        biquad_ΔE = biquad_energy(new_s) - biquad_energy(old_s)
+
+        ΔE = H0_ΔE + biquad_ΔE
     end
     return nothing
 end
