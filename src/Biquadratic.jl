@@ -1,9 +1,14 @@
 module Biquadratic
 
+include("PeriodicArrays.jl")
+
+import Random.AbstractRNG
+import Random.default_rng
+
+using .PeriodicArrays
 using Carlo
 using HDF5
 using LinearAlgebra
-import Random.default_rng, Random.AbstractRNG
 
 # Note: Using temperature in units of energy (k_B = 1)
 struct MC <: AbstractMC
