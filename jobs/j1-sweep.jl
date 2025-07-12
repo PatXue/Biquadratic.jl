@@ -14,11 +14,15 @@ tm.sweeps = 5000
 tm.thermalization = 1000
 tm.binsize = 50
 
-tm.J = 1.0
-tm.H = 0.0
-Ts = 0.1:0.1:4.0
-for T in Ts
-    tm.T = T
+tm.T = 0.02
+tm.J2a = 1.0
+tm.J2b = -1.0
+J1s = -2.0:0.1:2.0
+for J1 in J1s
+    tm.J1 = J1
+    tm.K = 0.2
+    task(tm)
+    tm.K = -0.2
     task(tm)
 end
 
