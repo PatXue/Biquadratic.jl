@@ -86,7 +86,7 @@ function  Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
 
         # Probability of accepting spin flip (for ΔE ≤ 0 always accept)
         prob = exp(-ΔE / mc.T)
-        if prob >= 1.0 || rand(ctx.rng) < prob
+        if prob >= 1.0 || rand(rng) < prob
             mc.spins[x, y] = new_s
         end
     end
