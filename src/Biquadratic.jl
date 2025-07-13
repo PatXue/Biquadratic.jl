@@ -73,7 +73,7 @@ function energy(mc::MC, s::SVector, x, y)
     return H0 + biquad
 end
 
-function  Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
+function Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
     Lx, Ly = size(mc.spins)
     for _ in 1:length(mc.spins)
         # Select site for spin change
@@ -120,14 +120,23 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
 
     # Energy per lattice site
     energy = 0.0
+    # Averaged adjacent dot products
+    Dx0 = 0.0
+    Dy0 = 0.0
     for y in 1:Ly
         for x in 1:Lx
             energy += half_energy(mc, x, y)
+            Dx0 += mc.spins[x, y] ⋅ mc.spins[x+1, y]
+            Dy0 += mc.spins[x, y] ⋅ mc.spins[x, y+1]
         end
     end
     energy /= N
     measure!(ctx, :Energy, energy)
     measure!(ctx, :Energy2, energy^2)
+    Dx0 /= N
+    Dy0 /= N
+    measure!(ctx, :Dx0, Dx0)
+    measure!(ctx, :Dy0, Dy0)
 
     return nothing
 end
