@@ -40,7 +40,7 @@ function MC(params::AbstractDict)
     return MC(T, J1, J2a, J2b, K, Lx, Ly)
 end
 
-function Random.rand(rng::AbstractRNG, ::Type{SVector})
+function Random.rand(rng::AbstractRNG, ::Random.SamplerType{SpinVector})
     ϕ = 2π * rand(rng)
     θ = acos(2 * rand(rng) - 1)
     return SpinVector(cos(ϕ)sin(θ), sin(ϕ)sin(θ), cos(θ))
