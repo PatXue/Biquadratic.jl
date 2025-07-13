@@ -39,12 +39,6 @@ function MC(params::AbstractDict)
     return MC(T, J1, J2a, J2b, K, Lx, Ly)
 end
 
-function Random.rand(rng::AbstractRNG, ::Type{SVector})
-    ϕ = 2π * rand(rng)
-    θ = acos(2 * rand(rng) - 1)
-    return SVector(cos(ϕ)sin(θ), sin(ϕ)sin(θ), cos(θ))
-end
-
 function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
     if params[:rand_init]
         rand!(ctx.rng, mc.spins)
