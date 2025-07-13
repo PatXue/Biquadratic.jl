@@ -26,7 +26,7 @@ struct MC <: AbstractMC
 end
 
 MC(T, J1, J2a, J2b, K, Lx, Ly) =
-    MC(T, J1, J2a, J2b, K, fill(zeros(UnitVector), (Lx, Ly)))
+    MC(T, J1, J2a, J2b, K, fill(UnitVector(), (Lx, Ly)))
 
 MC() = MC(1.0, 0.1, 10.0, -10.0, 0.2, 20, 20)
 

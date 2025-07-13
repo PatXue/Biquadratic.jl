@@ -11,6 +11,7 @@ struct UnitVector <: FieldVector{3, Float64}
     y::Float64
     z::Float64
 
+    UnitVector() = new(0, 0, 1)
     UnitVector(x, y, z) =
         norm((x, y, z)) ≈ 1.0 ? new(x, y, z) : error("Non-unit unit vector")
     UnitVector((x, y, z)::Tuple) =
