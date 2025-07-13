@@ -8,6 +8,7 @@ end
 const PeriodicMatrix{T} = PeriodicArray{T, 2}
 
 Base.size(A::PeriodicArray) = size(A.array)
+Base.checkbounds(::Type{Bool}, A::PeriodicArray, I...) = true
 Base.convert(::Type{PeriodicArray{T, N}}, A::AbstractArray{T, N}) where {T, N} =
     PeriodicArray(A)
 
