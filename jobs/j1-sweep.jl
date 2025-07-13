@@ -8,10 +8,10 @@ using Carlo.JobTools
 tm = TaskMaker()
 tm.rand_init = true
 
-L = 20
+L = 40
 tm.Lx = tm.Ly = L
-tm.sweeps = 5000
-tm.thermalization = 1000
+tm.sweeps = 10000
+tm.thermalization = 5000
 tm.binsize = 50
 
 tm.T = 0.02
