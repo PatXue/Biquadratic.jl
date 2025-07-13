@@ -17,7 +17,7 @@ struct UnitVector <: FieldVector{3, Float64}
         norm((x, y, z)) ≈ 1.0 ? new(x, y, z) : error("Non-unit unit vector")
 end
 
-function Random.rand(rng::AbstractRNG, ::Type{UnitVector})
+function Random.rand(rng::AbstractRNG, ::Random.SamplerType{UnitVector})
     ϕ = 2π * rand(rng)
     θ = acos(2 * rand(rng) - 1)
     return UnitVector(cos(ϕ)sin(θ), sin(ϕ)sin(θ), cos(θ))
