@@ -12,6 +12,7 @@ using LinearAlgebra
 using Random
 using StaticArrays
 
+const SpinVector = SVector{3, Float64}
 # Note: Using temperature in units of energy (k_B = 1)
 # All energy units are in terms of J2a (best to set J2a = 1)
 struct MC <: AbstractMC
@@ -21,11 +22,11 @@ struct MC <: AbstractMC
     J2b::Float64 # Next-nearest neighbor coupling energy (NW-SE direction)
     K::Float64   # Biquadratic coupling energy
 
-    spins::PeriodicMatrix{SVector{3, Float64}}
+    spins::PeriodicMatrix{SpinVector}
 end
 
 MC(T, J1, J2a, J2b, K, Lx, Ly) =
-    MC(T, J1, J2a, J2b, K, fill(zeros(SVector{3}), (Lx, Ly)))
+    MC(T, J1, J2a, J2b, K, fill(zeros(SpinVector), (Lx, Ly)))
 
 MC() = MC(1.0, 0.1, 10.0, -10.0, 0.2, 20, 20)
 
@@ -42,7 +43,7 @@ end
 function Random.rand(rng::AbstractRNG, ::Type{SVector})
     ϕ = 2π * rand(rng)
     θ = acos(2 * rand(rng) - 1)
-    return SVector(cos(ϕ)sin(θ), sin(ϕ)sin(θ), cos(θ))
+    return SpinVector(cos(ϕ)sin(θ), sin(ϕ)sin(θ), cos(θ))
 end
 
 function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
@@ -51,7 +52,7 @@ function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
         return nothing
     end
     for I in eachindex(mc.spins)
-        mc.spins[I] = SVector(0.0, 0.0, 1.0)
+        mc.spins[I] = SpinVector(0, 0, 1)
     end
     return nothing
 end
@@ -64,7 +65,7 @@ nnna_sum(A::AbstractArray, x, y) = A[x+1, y+1] + A[x-1, y-1]
 nnnb_sum(A::AbstractArray, x, y) = A[x+1, y-1] + A[x-1, y+1]
 
 # Calculate the energy at a lattice site (x, y) if it had spin s
-function energy(mc::MC, s::SVector, x, y)
+function energy(mc::MC, s::SpinVector, x, y)
     nn = nn_sum(mc.spins, x, y)
     nnna = nnna_sum(mc.spins, x, y)
     nnnb = nnnb_sum(mc.spins, x, y)
@@ -81,7 +82,7 @@ function Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
         y = rand(rng, 1:Ly)
         old_s = mc.spins[x, y]
         # Propose new spin vector
-        new_s = rand(rng, SVector)
+        new_s = rand(rng, SpinVector)
         ΔE = energy(mc, new_s, x, y) - energy(mc, old_s, x, y)
 
         # Probability of accepting spin flip (for ΔE ≤ 0 always accept)
