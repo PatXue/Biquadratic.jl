@@ -11,7 +11,7 @@ tm.rand_init = true
 L = 40
 tm.Lx = tm.Ly = L
 tm.sweeps = 5000
-tm.thermalization = 10000
+tm.thermalization = 15000
 tm.binsize = 50
 
 tm.T = 0.02
