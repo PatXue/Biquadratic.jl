@@ -122,13 +122,17 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     # Energy per lattice site
     energy = 0.0
     # Averaged adjacent dot products
-    Dx0 = 0.0
-    Dy0 = 0.0
+    Dx0 = Dy0 = 0.0
+    Dxπ = Dyπ = 0.0
     for y in 1:Ly
         for x in 1:Lx
             energy += half_energy(mc, x, y)
-            Dx0 += mc.spins[x, y] ⋅ mc.spins[x+1, y]
-            Dy0 += mc.spins[x, y] ⋅ mc.spins[x, y+1]
+            x_dot = mc.spins[x, y] ⋅ mc.spins[x+1, y]
+            y_dot = mc.spins[x, y] ⋅ mc.spins[x, y+1]
+            Dx0 += x_dot
+            Dy0 += y_dot * (-1)^(x+y)
+            Dxπ += x_dot * (-1)^(x+y)
+            Dyπ += y_dot
         end
     end
     energy /= N
