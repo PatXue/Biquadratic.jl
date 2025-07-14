@@ -130,9 +130,9 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
             x_dot = mc.spins[x, y] ⋅ mc.spins[x+1, y]
             y_dot = mc.spins[x, y] ⋅ mc.spins[x, y+1]
             Dx0 += x_dot
-            Dy0 += y_dot * (-1)^(x+y)
+            Dy0 += y_dot
             Dxπ += x_dot * (-1)^(x+y)
-            Dyπ += y_dot
+            Dyπ += y_dot * (-1)^(x+y)
         end
     end
     energy /= N
