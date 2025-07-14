@@ -10,9 +10,9 @@ tm.rand_init = true
 
 L = 40
 tm.Lx = tm.Ly = L
-tm.sweeps = 5000
-tm.thermalization = 15000
-tm.binsize = 50
+tm.sweeps = 10000
+tm.thermalization = 20000
+tm.binsize = 100
 
 tm.T = 0.02
 tm.J2a = 1.0
