@@ -124,15 +124,24 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     # Averaged adjacent dot products
     Dx0 = Dy0 = 0.0
     Dxπ = Dyπ = 0.0
+    # Spin current
+    P = zeros(3)
+    const x_hat = [1.0, 0.0, 0.0]
     for y in 1:Ly
         for x in 1:Lx
             energy += half_energy(mc, x, y)
-            x_dot = mc.spins[x, y] ⋅ mc.spins[x+1, y]
-            y_dot = mc.spins[x, y] ⋅ mc.spins[x, y+1]
+
+            s = mc.spins[x, y]
+            sx = mc.spins[x+1, y]
+            sy = mc.spins[x, y+1]
+            x_dot = s ⋅ sx
+            y_dot = s ⋅ sy
             Dx0 += x_dot
             Dy0 += y_dot
             Dxπ += x_dot * (-1)^(x+y)
             Dyπ += y_dot * (-1)^(x+y)
+
+            P += x_hat × (s × sx)
         end
     end
     energy /= N
@@ -142,6 +151,8 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     Dy0 /= N
     measure!(ctx, :Dx0, Dx0)
     measure!(ctx, :Dy0, Dy0)
+    P /= N
+    measure!(ctx, :P, norm(P))
 
     return nothing
 end
