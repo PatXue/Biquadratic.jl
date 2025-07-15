@@ -8,10 +8,10 @@ using Carlo.JobTools
 tm = TaskMaker()
 tm.rand_init = true
 
-L = 10
+L = 20
 tm.Lx = tm.Ly = L
-tm.sweeps = 0
-tm.thermalization = 20000
+tm.sweeps = 20000
+tm.thermalization = 0
 tm.binsize = 100
 
 tm.T = 0.02
@@ -27,7 +27,7 @@ for K in Ks
     end
 end
 
-job = JobInfo("temp-sweep", Biquadratic.MC;
+job = JobInfo("small-sys", Biquadratic.MC;
     run_time = "24:00:00",
     checkpoint_time = "30:00",
     tasks = make_tasks(tm),
