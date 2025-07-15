@@ -9,6 +9,7 @@ using .PeriodicArrays
 using Carlo
 using HDF5
 using LinearAlgebra
+using MPI
 using Random
 using StaticArrays
 
@@ -57,6 +58,10 @@ function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
     return nothing
 end
 
+function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict, ::MPI.Comm)
+    Carlo.init!(mc, ctx, params)
+end
+
 # Sum spins of position (x, y)'s nearest neighbors
 nn_sum(A::AbstractArray, x, y) = A[x+1, y] + A[x, y+1] + A[x-1, y] + A[x, y-1]
 # Sum spins of (x, y)'s next nearest NE-SW neighbors
@@ -95,6 +100,10 @@ function Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
 end
 
 function Carlo.sweep!(mc::MC, ctx::Carlo.MCContext)
+    Carlo.sweep!(mc, ctx.rng)
+end
+
+function Carlo.sweep!(mc::MC, ctx::Carlo.MCContext, ::MPI.Comm)
     Carlo.sweep!(mc, ctx.rng)
 end
 
