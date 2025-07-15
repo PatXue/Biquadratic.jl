@@ -151,6 +151,10 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     Dy0 /= N
     measure!(ctx, :Dx0, Dx0)
     measure!(ctx, :Dy0, Dy0)
+    Dxπ /= N
+    Dyπ /= N
+    measure!(ctx, :Dxπ, Dxπ)
+    measure!(ctx, :Dyπ, Dyπ)
     P /= N
     measure!(ctx, :P, norm(P))
 
