@@ -126,7 +126,7 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     Dxπ = Dyπ = 0.0
     # Spin current
     P = zeros(3)
-    const x_hat = [1.0, 0.0, 0.0]
+    x_hat = [1.0, 0.0, 0.0]
     for y in 1:Ly
         for x in 1:Lx
             energy += half_energy(mc, x, y)
