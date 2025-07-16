@@ -182,7 +182,8 @@ function Carlo.write_checkpoint(mc::MC, out::HDF5.Group)
     return nothing
 end
 function Carlo.read_checkpoint!(mc::MC, in::HDF5.Group)
-    mc.spins .= read(in, "spins")
+    raw_spins = read(in, "spins")
+    mc.spins .= map(v -> SVector(v[:data][1], v[:data][2], v[:data][3]), raw_spins)
     return nothing
 end
 
