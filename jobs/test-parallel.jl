@@ -26,9 +26,10 @@ for J1 in J1s
     task(tm)
 end
 
-job = JobInfo("j1-fine-sweep", Biquadratic.MC;
+job = JobInfo("parallel-test", Biquadratic.MC;
     run_time = "24:00:00",
     checkpoint_time = "30:00",
     tasks = make_tasks(tm),
+    ranks_per_run=8,
 )
 start(job, ARGS)
