@@ -54,12 +54,22 @@ function init_eag!(spins::AbstractMatrix{SpinVector})
     end
 end
 
+function init_orth!(spins::AbstractMatrix{SpinVector})
+    for I in eachindex(IndexCartesian(), spins)
+        x, y = Tuple(I)
+        θ = π/2 * (x + y)
+        spins[I] = spin_sign * SVector(cos(θ), sin(θ), 0.0)
+    end
+end
+
 function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
     init_type::Symbol = params[:init_type]
     if init_type == :const
         for I in eachindex(mc.spins)
             mc.spins[I] = SpinVector(0, 0, 1)
         end
+    elseif init_type == :orth
+        init_orth!(mc.spins)
     elseif init_type == :eag
         init_eag!(mc.spins)
     else
