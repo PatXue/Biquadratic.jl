@@ -55,7 +55,7 @@ function init_eag!(spins::AbstractMatrix{SpinVector})
 end
 
 function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
-    init_type::Symbol = params[:init]
+    init_type::Symbol = params[:init_type]
     if init_type == :const
         for I in eachindex(mc.spins)
             mc.spins[I] = SpinVector(0, 0, 1)
