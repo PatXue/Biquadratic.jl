@@ -6,12 +6,12 @@ using Carlo
 using Carlo.JobTools
 
 tm = TaskMaker()
-tm.init_type = :rand
+tm.init_type = :eag
 
 L = 40
 tm.Lx = tm.Ly = L
-tm.sweeps = 20000
-tm.thermalization = 40000
+tm.sweeps = 10000
+tm.thermalization = 20000
 tm.binsize = 100
 
 tm.J2a = 1.0
