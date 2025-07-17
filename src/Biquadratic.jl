@@ -46,13 +46,24 @@ function Random.rand(rng::AbstractRNG, ::Random.SamplerType{SpinVector})
     return SpinVector(cos(ϕ)sin(θ), sin(ϕ)sin(θ), cos(θ))
 end
 
-function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
-    if params[:rand_init]
-        rand!(ctx.rng, mc.spins)
-        return nothing
+function init_eag!(spins::AbstractMatrix{SpinVector})
+    for I in eachindex(IndexCartesian(), spins)
+        x, y = Tuple(I)
+        spin_sign = mod(x+y, 4) < 2 ? 1.0 : -1.0
+        spins[I] = spin_sign * SVector(1.0, 0.0, 0.0)
     end
-    for I in eachindex(mc.spins)
-        mc.spins[I] = SpinVector(0, 0, 1)
+end
+
+function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
+    init_type::Symbol = params[:init]
+    if init_type == :rand
+        rand!(ctx.rng, mc.spins)
+    elseif init_type == :eag
+        init_eag!(mc.spins)
+    else
+        for I in eachindex(mc.spins)
+            mc.spins[I] = SpinVector(0, 0, 1)
+        end
     end
     return nothing
 end
