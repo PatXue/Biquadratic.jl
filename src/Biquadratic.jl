@@ -56,14 +56,14 @@ end
 
 function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
     init_type::Symbol = params[:init]
-    if init_type == :rand
-        rand!(ctx.rng, mc.spins)
-    elseif init_type == :eag
-        init_eag!(mc.spins)
-    else
+    if init_type == :const
         for I in eachindex(mc.spins)
             mc.spins[I] = SpinVector(0, 0, 1)
         end
+    elseif init_type == :eag
+        init_eag!(mc.spins)
+    else
+        rand!(ctx.rng, mc.spins)
     end
     return nothing
 end
