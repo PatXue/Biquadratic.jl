@@ -58,7 +58,7 @@ function init_orth!(spins::AbstractMatrix{SpinVector})
     for I in eachindex(IndexCartesian(), spins)
         x, y = Tuple(I)
         θ = π/2 * (x + y)
-        spins[I] = spin_sign * SVector(cos(θ), sin(θ), 0.0)
+        spins[I] = SVector(cos(θ), sin(θ), 0.0)
     end
 end
 
