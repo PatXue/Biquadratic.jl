@@ -6,7 +6,6 @@ using Carlo
 using Carlo.JobTools
 
 tm = TaskMaker()
-tm.init_type = :eag
 
 L = 40
 tm.Lx = tm.Ly = L
@@ -21,6 +20,7 @@ tm.J1 = 0.1
 Ks = (-0.005, 0.005)
 Ts = 0.0:0.05:0.7
 for K in Ks
+    tm.init_type = K < 0 ? :eag : :orth
     tm.K = K
     for T in Ts
         tm.T = max(0.01, T)
