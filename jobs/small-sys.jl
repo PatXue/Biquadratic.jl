@@ -6,7 +6,7 @@ using Carlo
 using Carlo.JobTools
 
 tm = TaskMaker()
-tm.init_type = :rand
+tm.init_type = :eag
 
 L = 20
 tm.Lx = tm.Ly = L
