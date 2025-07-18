@@ -9,8 +9,8 @@ tm = TaskMaker()
 
 L = 40
 tm.Lx = tm.Ly = L
-tm.sweeps = 30000
-tm.binsize = 300
+tm.sweeps = 60000
+tm.binsize = 500
 
 tm.J2a = 1.0
 tm.J2b = -1.0
