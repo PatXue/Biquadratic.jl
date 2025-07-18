@@ -9,7 +9,7 @@ tm = TaskMaker()
 
 L = 40
 tm.Lx = tm.Ly = L
-tm.sweeps = 60000
+tm.sweeps = 50000
 tm.binsize = 500
 
 tm.J2a = 1.0
@@ -17,10 +17,10 @@ tm.J2b = -1.0
 tm.J1 = 0.1
 # Ks = (-0.05, -0.02, -0.01, -0.005, -0.003, -0.001, 0.001, 0.003, 0.005, 0.01, 0.05)
 Ks = (-0.005, 0.005)
-Ts = 0.0:0.05:0.7
+Ts = sort(collect(Iterators.flatten((0.0:0.05:0.7, 0.175:0.05:0.5))))
 for K in Ks
     tm.init_type = K < 0 ? :eag : :orth
-    tm.thermalization = K < 0 ? 30000 : 60000
+    tm.thermalization = K < 0 ? 30000 : 100000
     tm.K = K
     for T in Ts
         tm.T = max(0.01, T)
