@@ -6,23 +6,23 @@ using Carlo
 using Carlo.JobTools
 
 tm = TaskMaker()
-tm.init_type = :eag
 
 L = 20
 tm.Lx = tm.Ly = L
-tm.sweeps = 20000
+tm.sweeps = 40000
 tm.thermalization = 0
 tm.binsize = 100
 
-tm.T = 0.02
 tm.J2a = 1.0
 tm.J2b = -1.0
-Ks = (-0.2, 0.2)
-J1s = -2.0:0.1:2.0
+tm.J1 = 0.1
+Ks = (-0.005, 0.005)
+Ts = 0.0:0.05:0.7
 for K in Ks
+    tm.init_type = K < 0 ? :eag : :orth
     tm.K = K
-    for J1 in J1s
-        tm.J1 = J1
+    for T in Ts
+        tm.T = max(0.01, T)
         task(tm)
     end
 end
