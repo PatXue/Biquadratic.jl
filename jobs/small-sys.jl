@@ -9,7 +9,7 @@ tm = TaskMaker()
 
 L = 20
 tm.Lx = tm.Ly = L
-tm.sweeps = 40000
+tm.sweeps = 80000
 tm.thermalization = 0
 tm.binsize = 100
 
