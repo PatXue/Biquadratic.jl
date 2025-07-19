@@ -28,7 +28,7 @@ for K in Ks
     end
 end
 
-tm.sweeps = 75000
+tm.sweeps = 100000
 Ks = (-0.001, 0.001)
 for K in Ks
     tm.init_type = K < 0 ? :eag : :orth
