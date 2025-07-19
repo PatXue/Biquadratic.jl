@@ -86,7 +86,7 @@ nnna_sum(A::AbstractArray, x, y) = A[x+1, y+1] + A[x-1, y-1]
 nnnb_sum(A::AbstractArray, x, y) = A[x+1, y-1] + A[x-1, y+1]
 
 # Calculate the energy at a lattice site (x, y) if it had spin s
-function energy(mc::MC, s::SpinVector, x, y)
+function energy(mc::MC{:Metropolis}, s::SpinVector, x, y)
     nn = nn_sum(mc.spins, x, y)
     nnna = nnna_sum(mc.spins, x, y)
     nnnb = nnnb_sum(mc.spins, x, y)
@@ -95,7 +95,7 @@ function energy(mc::MC, s::SpinVector, x, y)
     return H0 + biquad
 end
 
-function Carlo.sweep!(mc::MC, rng::AbstractRNG=default_rng())
+function Carlo.sweep!(mc::MC{:Metropolis}, rng::AbstractRNG=default_rng())
     Lx, Ly = size(mc.spins)
     for _ in 1:length(mc.spins)
         # Select site for spin change
@@ -121,7 +121,7 @@ end
 
 # Calculate the energy contribution of a site (x, y), considering only half of
 # its bonds (avoids double counting when calculating total energy)
-function half_energy(mc::MC, x, y)
+function half_energy(mc::MC{:Metropolis}, x, y)
     s = mc.spins[x, y]
     nn = mc.spins[x+1, y] + mc.spins[x, y+1]
     nnna = mc.spins[x+1, y+1]
@@ -131,7 +131,7 @@ function half_energy(mc::MC, x, y)
     return H0 + biquad
 end
 
-function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
+function Carlo.measure!(mc::MC{:Metropolis}, ctx::Carlo.MCContext)
     Lx, Ly = size(mc.spins)
     N = Lx * Ly
     # Magnetization per lattice site
