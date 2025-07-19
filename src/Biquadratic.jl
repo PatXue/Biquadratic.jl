@@ -15,7 +15,7 @@ using StaticArrays
 const SpinVector = SVector{3, Float64}
 # Note: Using temperature in units of energy (k_B = 1)
 # All energy units are in terms of J2a (best to set J2a = 1)
-struct MC{Alg} <: AbstractMC
+struct MC <: AbstractMC
     T::Float64   # Temperature
     J1::Float64  # Nearest neighbor coupling energy
     J2a::Float64 # Next-nearest neighbor coupling energy (NE-SW direction)
