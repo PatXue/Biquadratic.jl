@@ -40,6 +40,18 @@ for K in Ks
     end
 end
 
+tm.sweeps = 50000
+Ks = (-0.01, 0.01)
+for K in Ks
+    tm.init_type = K < 0 ? :eag : :orth
+    tm.thermalization = K < 0 ? 50000 : 100000
+    tm.K = K
+    for T in Ts
+        tm.T = max(0.01, T)
+        task(tm)
+    end
+end
+
 job = JobInfo("temp-sweep", Biquadratic.MC;
     run_time = "24:00:00",
     checkpoint_time = "30:00",
