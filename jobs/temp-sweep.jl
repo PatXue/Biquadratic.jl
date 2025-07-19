@@ -28,8 +28,8 @@ for K in Ks
     end
 end
 
-Ks = (-0.005, 0.005)
-Ts = sort(collect(Iterators.flatten((0.0:0.05:0.7, 0.125:0.05:0.5))))
+tm.sweeps = 75000
+Ks = (-0.001, 0.001)
 for K in Ks
     tm.init_type = K < 0 ? :eag : :orth
     tm.thermalization = K < 0 ? 50000 : 100000
