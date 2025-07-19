@@ -15,7 +15,7 @@ using StaticArrays
 const SpinVector = SVector{3, Float64}
 # Note: Using temperature in units of energy (k_B = 1)
 # All energy units are in terms of J2a (best to set J2a = 1)
-struct MC{Alg} <: AbstractMC
+struct MC{AlgType} <: AbstractMC
     T::Float64   # Temperature
     J1::Float64  # Nearest neighbor coupling energy
     J2a::Float64 # Next-nearest neighbor coupling energy (NE-SW direction)
@@ -25,17 +25,19 @@ struct MC{Alg} <: AbstractMC
     spins::PeriodicMatrix{SpinVector}
 end
 
-MC(T=0.5, J1=0.1, J2a=1.0, J2b=-1.0, K=0.1, Lx::Int=20, Ly::Int=20) =
-    MC(T, J1, J2a, J2b, K, fill(zeros(SpinVector), (Lx, Ly)))
+function MC{AlgType}(T=0.5, J1=0.1, J2a=1.0, J2b=-1.0, K=0.1,
+                 Lx::Int=20, Ly::Int=20) where {AlgType}
+    MC{AlgType}(T, J1, J2a, J2b, K, fill(zeros(SpinVector), (Lx, Ly)))
+end
 
-function MC(params::AbstractDict)
+function MC{AlgType}(params::AbstractDict) where {AlgType}
     Lx, Ly = params[:Lx], params[:Ly]
     T = params[:T]
     J1 = params[:J1]
     J2a = params[:J2a]
     J2b = params[:J2b]
     K = params[:K]
-    return MC(T, J1, J2a, J2b, K, Lx, Ly)
+    return MC{AlgType}(T, J1, J2a, J2b, K, Lx, Ly)
 end
 
 function Random.rand(rng::AbstractRNG, ::Random.SamplerType{SpinVector})
@@ -180,8 +182,8 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     return nothing
 end
 
-function Carlo.register_evaluables(::Type{MC}, eval::AbstractEvaluator,
-                                   params::AbstractDict)
+function Carlo.register_evaluables(::Type{MC{AlgType}}, eval::AbstractEvaluator,
+                                   params::AbstractDict) where {AlgType}
     T = params[:T]
     J2a = params[:J2a]
     N = params[:Lx] * params[:Ly]
