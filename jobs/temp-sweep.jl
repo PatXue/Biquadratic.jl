@@ -52,7 +52,7 @@ for K in Ks
     end
 end
 
-job = JobInfo("temp-sweep", Biquadratic.MC;
+job = JobInfo("temp-sweep", Biquadratic.MC{:Metropolis};
     run_time = "24:00:00",
     checkpoint_time = "30:00",
     tasks = make_tasks(tm),

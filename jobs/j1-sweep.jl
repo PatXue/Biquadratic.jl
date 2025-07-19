@@ -26,7 +26,7 @@ for J1 in J1s
     task(tm)
 end
 
-job = JobInfo("j1-sweep", Biquadratic.MC;
+job = JobInfo("j1-sweep", Biquadratic.MC{:Metropolis};
     run_time = "24:00:00",
     checkpoint_time = "30:00",
     tasks = make_tasks(tm),
