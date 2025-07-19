@@ -25,8 +25,10 @@ struct MC <: AbstractMC
     spins::PeriodicMatrix{SpinVector}
 end
 
-MC(T=1.0, J1=0.1, J2a=10.0, J2b=-10.0, K=0.2, Lx=20, Ly=20) =
+MC(T, J1, J2a, J2b, K, Lx, Ly) =
     MC(T, J1, J2a, J2b, K, fill(zeros(SpinVector), (Lx, Ly)))
+
+MC() = MC(1.0, 0.1, 10.0, -10.0, 0.2, 20, 20)
 
 function MC(params::AbstractDict)
     Lx, Ly = params[:Lx], params[:Ly]
