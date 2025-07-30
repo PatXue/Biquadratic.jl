@@ -14,7 +14,7 @@ struct MC{AlgType} <: AbstractMC
 end
 
 function MC{AlgType}(; T=0.5, J1=0.1, J2a=1.0, J2b=-1.0, K=0.1, Lx::Int=20,
-                     Ly::Int=20, outdir="", savefreq=0) where {AlgType}
+                     Ly::Int=20, outdir=".", savefreq=0) where {AlgType}
     MC{AlgType}(T, J1, J2a, J2b, K, outdir, savefreq,
                 fill(zeros(SpinVector), (Lx, Ly)))
 end
@@ -27,7 +27,7 @@ function MC{AlgType}(params::AbstractDict) where {AlgType}
     J2b = params[:J2b]
     K = params[:K]
 
-    outdir = haskey(params, :outdir) ? params[:outdir] : ""
+    outdir = haskey(params, :outdir) ? params[:outdir] : "."
     savefreq = haskey(params, :savefreq) ? params[:savefreq] : 0
 
     return MC{AlgType}(; T, J1, J2a, J2b, K, Lx, Ly, outdir, savefreq)
