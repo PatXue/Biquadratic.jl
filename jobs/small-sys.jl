@@ -17,7 +17,7 @@ tm.J2a = 1.0
 tm.J2b = -1.0
 tm.J1 = 0.1
 Ks = (-0.005, 0.005)
-Ts = 0.0:0.05:0.7
+Ts = sort(collect(Iterators.flatten((0.0:0.05:0.7, 0.125:0.05:0.5))))
 for K in Ks
     tm.init_type = K < 0 ? :eag : :orth
     tm.K = K
