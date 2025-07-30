@@ -6,14 +6,17 @@ struct MC{AlgType} <: AbstractMC
     J2a::Float64   # Next-nearest neighbor coupling energy (NE-SW direction)
     J2b::Float64   # Next-nearest neighbor coupling energy (NW-SE direction)
     K::Float64     # Biquadratic coupling energy
-    outdir::String # Output directory for spin plots
+
+    outdir::String # Output directory for local spin current plots
+    savefreq::Int  # No. of sweeps between saving local spin current
 
     spins::PeriodicMatrix{SpinVector}
 end
 
-function MC{AlgType}(; T=0.5, J1=0.1, J2a=1.0, J2b=-1.0, K=0.1,
-                       outdir="", Lx::Int=20, Ly::Int=20) where {AlgType}
-    MC{AlgType}(T, J1, J2a, J2b, K, outdir, fill(zeros(SpinVector), (Lx, Ly)))
+function MC{AlgType}(; T=0.5, J1=0.1, J2a=1.0, J2b=-1.0, K=0.1, Lx::Int=20,
+                     Ly::Int=20, outdir="", savefreq=0) where {AlgType}
+    MC{AlgType}(T, J1, J2a, J2b, K, outdir, savefreq,
+                fill(zeros(SpinVector), (Lx, Ly)))
 end
 
 function MC{AlgType}(params::AbstractDict) where {AlgType}
@@ -23,8 +26,11 @@ function MC{AlgType}(params::AbstractDict) where {AlgType}
     J2a = params[:J2a]
     J2b = params[:J2b]
     K = params[:K]
+
     outdir = haskey(params, :outdir) ? params[:outdir] : ""
-    return MC{AlgType}(; T, J1, J2a, J2b, K, outdir, Lx, Ly)
+    savefreq = haskey(params, :savefreq) ? params[:savefreq] : 0
+
+    return MC{AlgType}(; T, J1, J2a, J2b, K, Lx, Ly, outdir, savefreq)
 end
 
 function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
@@ -47,6 +53,12 @@ function Carlo.sweep!(mc::MC, ctx::Carlo.MCContext)
     Carlo.sweep!(mc, ctx.rng)
 end
 
+# Returns if spin current should be saved on this sweep (assuming thermalized)
+function is_save_sweep(mc::MC, ctx::Carlo.MCContext)
+    measure_sweeps = ctx.sweeps - ctx.thermalized_sweeps
+    return mc.savefreq > 0 && measure_sweeps % mc.savefreq == 0
+end
+
 function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     Lx, Ly = size(mc.spins)
     N = Lx * Ly
@@ -63,7 +75,8 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     Dxπ = Dyπ = 0.0
     # Spin current
     P = zeros(3)
-    x_hat = [1.0, 0.0, 0.0]
+    x_hat = SVector(1, 0, 0)
+
     for y in 1:Ly
         for x in 1:Lx
             energy += half_energy(mc, x, y)
