@@ -1,18 +1,19 @@
 # Note: Using temperature in units of energy (k_B = 1)
 # All energy units are in terms of J2a (best to set J2a = 1)
 struct MC{AlgType} <: AbstractMC
-    T::Float64   # Temperature
-    J1::Float64  # Nearest neighbor coupling energy
-    J2a::Float64 # Next-nearest neighbor coupling energy (NE-SW direction)
-    J2b::Float64 # Next-nearest neighbor coupling energy (NW-SE direction)
-    K::Float64   # Biquadratic coupling energy
+    T::Float64     # Temperature
+    J1::Float64    # Nearest neighbor coupling energy
+    J2a::Float64   # Next-nearest neighbor coupling energy (NE-SW direction)
+    J2b::Float64   # Next-nearest neighbor coupling energy (NW-SE direction)
+    K::Float64     # Biquadratic coupling energy
+    outdir::String # Output directory for spin plots
 
     spins::PeriodicMatrix{SpinVector}
 end
 
-function MC{AlgType}(T=0.5, J1=0.1, J2a=1.0, J2b=-1.0, K=0.1,
-                 Lx::Int=20, Ly::Int=20) where {AlgType}
-    MC{AlgType}(T, J1, J2a, J2b, K, fill(zeros(SpinVector), (Lx, Ly)))
+function MC{AlgType}(; T=0.5, J1=0.1, J2a=1.0, J2b=-1.0, K=0.1,
+                       outdir="", Lx::Int=20, Ly::Int=20) where {AlgType}
+    MC{AlgType}(T, J1, J2a, J2b, K, outdir, fill(zeros(SpinVector), (Lx, Ly)))
 end
 
 function MC{AlgType}(params::AbstractDict) where {AlgType}
@@ -22,7 +23,8 @@ function MC{AlgType}(params::AbstractDict) where {AlgType}
     J2a = params[:J2a]
     J2b = params[:J2b]
     K = params[:K]
-    return MC{AlgType}(T, J1, J2a, J2b, K, Lx, Ly)
+    outdir = haskey(params, :outdir) ? params[:outdir] : ""
+    return MC{AlgType}(; T, J1, J2a, J2b, K, outdir, Lx, Ly)
 end
 
 function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
