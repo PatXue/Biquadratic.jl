@@ -55,8 +55,20 @@ end
 
 # Returns if spin current should be saved on this sweep (assuming thermalized)
 function is_save_sweep(mc::MC, ctx::Carlo.MCContext)
-    measure_sweeps = ctx.sweeps - ctx.thermalized_sweeps
+    measure_sweeps = ctx.sweeps - ctx.thermalization_sweeps
     return mc.savefreq > 0 && measure_sweeps % mc.savefreq == 0
+end
+
+function save_spin_current(mc::MC, ctx::Carlo.MCContext)
+    local_Ps = Matrix{SpinVector}(undef, size(mc.spins)...)
+    x_hat = SVector(1, 0, 0)
+    for y in 1:size(mc.spins, 2)
+        for x in 1:size(mc.spins, 1)
+            local_Ps[x, y] = x_hat × (mc.spins[x, y] × mc.spins[x+1, y])
+        end
+    end
+    outfile = "$(mc.outdir)/T$(replace(string(mc.T), "." => ",")).jld"
+    save(outfile, "sweep$(ctx.sweeps - ctx.thermalization_sweeps)", local_Ps)
 end
 
 function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
@@ -76,6 +88,9 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     # Spin current
     P = zeros(3)
     x_hat = SVector(1, 0, 0)
+    if is_save_sweep(mc, ctx)
+        save_spin_current(mc, ctx)
+    end
 
     for y in 1:Ly
         for x in 1:Lx
