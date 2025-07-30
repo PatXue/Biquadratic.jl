@@ -67,7 +67,7 @@ function save_spin_current(mc::MC, ctx::Carlo.MCContext)
             local_Ps[x, y] = x_hat × (mc.spins[x, y] × mc.spins[x+1, y])
         end
     end
-    outfile = "$(mc.outdir)/T$(replace(string(mc.T), "." => ",")).jld"
+    outfile = "$(mc.outdir)/spin-curr.jld"
     save(outfile, "sweep$(ctx.sweeps - ctx.thermalization_sweeps)", local_Ps)
 end
 
