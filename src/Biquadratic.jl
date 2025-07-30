@@ -3,10 +3,10 @@ module Biquadratic
 import Random.AbstractRNG
 import Random.default_rng
 
-using PeriodicArrays
 using Carlo
 using HDF5
 using LinearAlgebra
+using PeriodicArrays
 using Random
 using StaticArrays
 
