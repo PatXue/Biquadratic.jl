@@ -13,6 +13,8 @@ tm.sweeps = 80000
 tm.thermalization = 0
 tm.binsize = 100
 
+tm.savefreq = 5000
+
 tm.J2a = 1.0
 tm.J2b = -1.0
 tm.J1 = 0.1
@@ -23,6 +25,7 @@ for K in Ks
     tm.K = K
     for T in Ts
         tm.T = max(0.01, T)
+        tm.outdir = "small-sys.data/$(current_task_name(tm))"
         task(tm)
     end
 end
