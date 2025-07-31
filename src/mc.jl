@@ -68,7 +68,9 @@ function save_spin_current(mc::MC, ctx::Carlo.MCContext)
         end
     end
     outfile = "$(mc.outdir)/spin-curr.jld"
-    save(outfile, "sweep$(ctx.sweeps - ctx.thermalization_sweeps)", local_Ps)
+    jldopen(outfile, false, true, true, false, false) do file
+        write(file, "sweep$(ctx.sweeps - ctx.thermalization_sweeps)", local_Ps)
+    end
 end
 
 function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
