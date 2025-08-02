@@ -87,7 +87,7 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     Dx0 = Dy0 = 0.0
     Dxπ = Dyπ = 0.0
     # Spin current
-    P = zeros(3)
+    spin_curr = zeros(3)
     x_hat = SVector(1, 0, 0)
     if is_save_sweep(mc, ctx)
         save_spin_current(mc, ctx)
@@ -107,7 +107,7 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
             Dxπ += x_dot * (-1)^(x+y)
             Dyπ += y_dot * (-1)^(x+y)
 
-            P += x_hat × (s × sx)
+            spin_curr += s × sx
         end
     end
     energy /= N
@@ -121,8 +121,9 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     Dyπ /= N
     measure!(ctx, :Dxπ, abs(Dxπ))
     measure!(ctx, :Dyπ, abs(Dyπ))
-    P /= N
-    measure!(ctx, :P, norm(P))
+    spin_curr /= N
+    measure!(ctx, :J_s, norm(spin_curr))
+    measure!(ctx, :P, norm(x_hat × spin_curr))
 
     return nothing
 end
