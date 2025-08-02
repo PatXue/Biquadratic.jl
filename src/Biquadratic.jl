@@ -5,7 +5,7 @@ import Random.default_rng
 
 using Carlo
 using HDF5
-using JLD
+using JLD2
 using LinearAlgebra
 using PeriodicArrays
 using Random
