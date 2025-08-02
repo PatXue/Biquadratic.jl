@@ -61,10 +61,9 @@ end
 
 function save_spin_current(mc::MC, ctx::Carlo.MCContext)
     local_Ps = Matrix{SpinVector}(undef, size(mc.spins)...)
-    x_hat = SVector(1, 0, 0)
     for y in 1:size(mc.spins, 2)
         for x in 1:size(mc.spins, 1)
-            local_Ps[x, y] = x_hat × (mc.spins[x, y] × mc.spins[x+1, y])
+            local_Ps[x, y] = mc.spins[x, y] × mc.spins[x+1, y]
         end
     end
     outfile = "$(mc.outdir)/spin-curr.jld"
