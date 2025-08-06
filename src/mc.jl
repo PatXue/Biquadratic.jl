@@ -59,16 +59,10 @@ function is_save_sweep(mc::MC, ctx::Carlo.MCContext)
     return mc.savefreq > 0 && measure_sweeps % mc.savefreq == 0
 end
 
-function save_spin_current(mc::MC, ctx::Carlo.MCContext)
-    local_Ps = Matrix{SpinVector}(undef, size(mc.spins)...)
-    for y in 1:size(mc.spins, 2)
-        for x in 1:size(mc.spins, 1)
-            local_Ps[x, y] = mc.spins[x, y] × mc.spins[x+1, y]
-        end
-    end
-    outfile = "$(mc.outdir)/spin-curr.jld2"
-    jldopen(outfile, "a+") do file
-        file["sweep$(ctx.sweeps - ctx.thermalization_sweeps)"] = local_Ps
+function save_spin(mc::MC, ctx::Carlo.MCContext)
+    jldopen("$(mc.outdir)/spins.jld2", "a+") do file
+        sweep_name = "sweep$(ctx.sweeps - ctx.thermalization_sweeps)"
+        file[sweep_name] = Matrix(mc.spins)
     end
 end
 
@@ -89,9 +83,6 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     # Spin current
     spin_curr = zeros(3)
     x_hat = SVector(1, 0, 0)
-    if is_save_sweep(mc, ctx)
-        save_spin_current(mc, ctx)
-    end
 
     for y in 1:Ly
         for x in 1:Lx
@@ -124,6 +115,10 @@ function Carlo.measure!(mc::MC, ctx::Carlo.MCContext)
     spin_curr /= N
     measure!(ctx, :J_s, norm(spin_curr))
     measure!(ctx, :P, norm(x_hat × spin_curr))
+
+    if is_save_sweep(mc, ctx)
+        save_spin(mc, ctx)
+    end
 
     return nothing
 end
