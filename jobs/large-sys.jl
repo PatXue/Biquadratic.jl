@@ -7,7 +7,7 @@ using Carlo.JobTools
 
 tm = TaskMaker()
 
-L = 40
+L = 80
 tm.Lx = tm.Ly = L
 tm.thermalization = 50000
 tm.sweeps = 100000
@@ -19,7 +19,7 @@ tm.J2b = -1.0
 tm.J1 = 0.1
 # Ks = (-0.05, -0.02, -0.01, -0.005, -0.003, -0.001, 0.001, 0.003, 0.005, 0.01, 0.05)
 Ks = (-0.005, 0.005)
-Ts = sort(collect(Iterators.flatten((0.0:0.05:0.7, 0.125:0.05:0.5))))
+Ts = 0.0:0.5:0.7
 for K in Ks
     tm.init_type = K < 0 ? :eag : :orth
     tm.K = K
