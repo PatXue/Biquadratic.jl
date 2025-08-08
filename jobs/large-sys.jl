@@ -9,7 +9,6 @@ tm = TaskMaker()
 
 L = 80
 tm.Lx = tm.Ly = L
-tm.thermalization = 100000
 tm.sweeps = 100000
 tm.binsize = 500
 # tm.savefreq = 5000
@@ -24,8 +23,8 @@ for K in Ks
     tm.init_type = K < 0 ? :eag : :orth
     tm.K = K
     for T in Ts
+        tm.thermalization = (0.25 ≤ T ≤ 0.45) ? 200000 : 100000
         tm.T = max(0.01, T)
-        tm.outdir = "temp-sweep.data/$(current_task_name(tm))"
         task(tm)
     end
 end
