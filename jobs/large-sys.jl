@@ -9,7 +9,7 @@ tm = TaskMaker()
 
 L = 80
 tm.Lx = tm.Ly = L
-tm.sweeps = 100000
+tm.sweeps = 150000
 tm.binsize = 500
 # tm.savefreq = 5000
 
