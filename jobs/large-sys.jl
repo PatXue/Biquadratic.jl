@@ -7,8 +7,7 @@ using Carlo.JobTools
 
 tm = TaskMaker()
 
-L = 80
-tm.Lx = tm.Ly = L
+tm.Lx = tm.Ly = 80
 tm.sweeps = 150000
 tm.binsize = 500
 # tm.savefreq = 5000
@@ -29,27 +28,18 @@ for K in Ks
     end
 end
 
-# tm.sweeps = 100000
-# Ks = (-0.001, 0.001)
-# for K in Ks
-#     tm.init_type = K < 0 ? :eag : :orth
-#     tm.K = K
-#     for T in Ts
-#         tm.T = max(0.01, T)
-#         task(tm)
-#     end
-# end
-
-# tm.sweeps = 50000
-# Ks = (-0.01, 0.01)
-# for K in Ks
-#     tm.init_type = K < 0 ? :eag : :orth
-#     tm.K = K
-#     for T in Ts
-#         tm.T = max(0.01, T)
-#         task(tm)
-#     end
-# end
+tm.sweeps = 200000
+tm.binsize = 1000
+tm.Lx = tm.Ly = 120
+for K in Ks
+    tm.init_type = K < 0 ? :eag : :orth
+    tm.K = K
+    for T in Ts
+        tm.thermalization = (0.25 ≤ T ≤ 0.45) ? 400000 : 200000
+        tm.T = max(0.01, T)
+        task(tm)
+    end
+end
 
 job = JobInfo("large-sys", Biquadratic.MC{:Metropolis};
     run_time = "24:00:00",
