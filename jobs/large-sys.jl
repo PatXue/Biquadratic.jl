@@ -7,11 +7,11 @@ using Carlo.JobTools
 
 tm = TaskMaker()
 
-tm.Lx = tm.Ly = 80
-tm.sweeps = 150000
-tm.binsize = 500
+tm.sweeps = 300000
+tm.binsize = 1000
 # tm.savefreq = 5000
 
+tm.Lx = tm.Ly = 80
 tm.J2a = 1.0
 tm.J2b = -1.0
 tm.J1 = 0.1
@@ -28,7 +28,7 @@ for K in Ks
     end
 end
 
-tm.sweeps = 200000
+tm.sweeps = 300000
 tm.binsize = 1000
 tm.Lx = tm.Ly = 120
 for K in Ks
