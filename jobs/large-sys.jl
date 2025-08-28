@@ -8,6 +8,7 @@ using Carlo.JobTools
 tm = TaskMaker()
 
 tm.sweeps = 300000
+tm.thermalization = 300000
 tm.binsize = 1000
 # tm.savefreq = 5000
 
@@ -22,20 +23,19 @@ for K in Ks
     tm.init_type = K < 0 ? :eag : :orth
     tm.K = K
     for T in Ts
-        tm.thermalization = (0.25 ≤ T ≤ 0.45) ? 200000 : 100000
         tm.T = max(0.01, T)
         task(tm)
     end
 end
 
-tm.sweeps = 300000
+tm.sweeps = 500000
+tm.thermalization = 500000
 tm.binsize = 1000
 tm.Lx = tm.Ly = 120
 for K in Ks
     tm.init_type = K < 0 ? :eag : :orth
     tm.K = K
     for T in Ts
-        tm.thermalization = (0.25 ≤ T ≤ 0.45) ? 400000 : 200000
         tm.T = max(0.01, T)
         task(tm)
     end
