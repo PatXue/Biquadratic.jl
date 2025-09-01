@@ -10,7 +10,6 @@ tm = TaskMaker()
 tm.sweeps = 300000
 tm.thermalization = 500000
 tm.binsize = 1000
-tm.init_type = :rand
 # tm.savefreq = 5000
 
 tm.Lx = tm.Ly = 80
@@ -22,6 +21,7 @@ Ks = (-0.005, 0.005)
 Ts = 0.0:0.05:0.7
 for K in Ks
     tm.K = K
+    tm.init_type = K < 0 ? :eag : :orth
     for T in Ts
         tm.T = max(0.01, T)
         task(tm)
@@ -34,6 +34,7 @@ tm.binsize = 1000
 tm.Lx = tm.Ly = 120
 for K in Ks
     tm.K = K
+    tm.init_type = K < 0 ? :eag : :orth
     for T in Ts
         tm.T = max(0.01, T)
         task(tm)
