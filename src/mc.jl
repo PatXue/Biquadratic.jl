@@ -43,6 +43,11 @@ function Carlo.init!(mc::MC, ctx::Carlo.MCContext, params::AbstractDict)
         init_orth!(mc.spins)
     elseif init_type == :eag
         init_eag!(mc.spins)
+    elseif init_type == :dir
+        dir::String = params[:dir] # Directory to read spin dump file from
+        h5open("$dir/run0001.dump.h5") do file
+            Carlo.read_checkpoint!(mc, file["simulation"])
+        end
     else
         rand!(ctx.rng, mc.spins)
     end
