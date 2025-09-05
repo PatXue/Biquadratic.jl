@@ -18,6 +18,7 @@ tm.savefreq = 5000
 tm.J2a = 1.0
 tm.J2b = -1.0
 tm.J1 = 0.1
+
 Ks = (-0.005, 0.005)
 Ts = sort(collect(Iterators.flatten((0.0:0.05:0.7, 0.125:0.05:0.5))))
 for K in Ks
@@ -25,8 +26,12 @@ for K in Ks
     tm.K = K
     for T in Ts
         tm.T = max(0.01, T)
-        tm.outdir = "small-sys.data/$(current_task_name(tm))"
+        spins_dir = "small-sys.data/$(current_task_name(tm))"
+        tm.outdir = spins_dir
         task(tm)
+        # After first task, set init to read from previous task's spins
+        tm.init_type = :dir
+        tm.dir = spins_dir
     end
 end
 
